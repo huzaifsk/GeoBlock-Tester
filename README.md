@@ -77,8 +77,6 @@ US, UK, Germany, France, Japan, China, India, Brazil, Australia, Canada, Russia,
 
 This project is configured for deployment on **Cloudflare Pages**.
 
-See [CLOUDFLARE_DEPLOY.md](./CLOUDFLARE_DEPLOY.md) for detailed deployment instructions.
-
 ## 📄 License
 
 MIT
