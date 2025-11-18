@@ -1,0 +1,227 @@
+import { useEffect, useRef } from 'react';
+import Globe from 'react-globe.gl';
+
+const MapView = ({ testResults, selectedCountries }) => {
+  const globeEl = useRef();
+
+  useEffect(() => {
+    if (globeEl.current) {
+      globeEl.current.controls().autoRotate = false;
+      globeEl.current.pointOfView({ altitude: 2.5 });
+    }
+  }, []);
+
+  const htmlElements = selectedCountries.map(country => {
+    const result = testResults?.find(r => r.country.code === country.code);
+    return {
+      lat: country.lat,
+      lng: country.lng,
+      country,
+      result,
+    };
+  });
+
+  return (
+    <div className="relative w-full h-full bg-slate-900 overflow-hidden">
+      {/* Globe Container */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <Globe
+          ref={globeEl}
+          width={window.innerWidth < 1024 ? window.innerWidth : window.innerWidth - 768}
+          height={window.innerHeight - (window.innerWidth < 640 ? 64 : 80)}
+          globeImageUrl="https://unpkg.com/three-globe@2.31.1/example/img/earth-blue-marble.jpg"
+          bumpImageUrl="https://unpkg.com/three-globe@2.31.1/example/img/earth-topology.png"
+          backgroundImageUrl="https://unpkg.com/three-globe@2.31.1/example/img/night-sky.png"
+          
+          htmlElementsData={htmlElements}
+          htmlElement={d => {
+            const el = document.createElement('div');
+            const status = d.result?.status || 'pending';
+            
+            const isMobile = window.innerWidth < 640;
+            el.innerHTML = `
+              <div style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                pointer-events: auto;
+              ">
+                <div style="
+                  width: ${isMobile ? '24px' : '32px'};
+                  height: ${isMobile ? '24px' : '32px'};
+                  border-radius: 50%;
+                  background: ${
+                    status === 'accessible' ? '#10b981' :
+                    status === 'blocked' ? '#ef4444' :
+                    status === 'testing' ? '#f59e0b' :
+                    '#64748b'
+                  };
+                  border: 3px solid rgba(255,255,255,0.4);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: ${isMobile ? '14px' : '18px'};
+                  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+                  animation: ${status === 'testing' ? 'pulse 2s infinite' : 'none'};
+                  cursor: pointer;
+                ">
+                  ${d.country.flag}
+                </div>
+                <div style="
+                  margin-top: 4px;
+                  padding: 2px ${isMobile ? '6px' : '8px'};
+                  background: rgba(0,0,0,0.85);
+                  border-radius: 4px;
+                  font-size: ${isMobile ? '8px' : '10px'};
+                  color: white;
+                  white-space: nowrap;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+                  font-weight: 500;
+                  ${isMobile ? 'display: none;' : ''}
+                ">
+                  ${d.country.name}
+                </div>
+                ${d.result ? `
+                  <div style="
+                    margin-top: 2px;
+                    padding: 2px 6px;
+                    background: ${status === 'accessible' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};
+                    border: 1px solid ${status === 'accessible' ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'};
+                    border-radius: 3px;
+                    font-size: 9px;
+                    color: ${status === 'accessible' ? '#10b981' : '#ef4444'};
+                    font-weight: 600;
+                  ">
+                    ${status === 'accessible' ? '✓ ' + d.result.loadTime + 'ms' : '✗ Blocked'}
+                  </div>
+                ` : ''}
+              </div>
+            `;
+            
+            el.style.pointerEvents = 'auto';
+            return el;
+          }}
+          htmlAltitude={0.02}
+          
+          labelsData={[
+            // Major cities
+            { lat: 40.7128, lng: -74.0060, text: 'New York', size: 0.5, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 51.5074, lng: -0.1278, text: 'London', size: 0.5, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 35.6762, lng: 139.6503, text: 'Tokyo', size: 0.5, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 48.8566, lng: 2.3522, text: 'Paris', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: -33.8688, lng: 151.2093, text: 'Sydney', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 55.7558, lng: 37.6173, text: 'Moscow', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 39.9042, lng: 116.4074, text: 'Beijing', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 19.4326, lng: -99.1332, text: 'Mexico City', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: -23.5505, lng: -46.6333, text: 'São Paulo', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 28.6139, lng: 77.2090, text: 'Delhi', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 1.3521, lng: 103.8198, text: 'Singapore', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 25.2048, lng: 55.2708, text: 'Dubai', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: -26.2041, lng: 28.0473, text: 'Johannesburg', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 37.5665, lng: 126.9780, text: 'Seoul', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 52.5200, lng: 13.4050, text: 'Berlin', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 41.9028, lng: 12.4964, text: 'Rome', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 40.4168, lng: -3.7038, text: 'Madrid', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 52.3676, lng: 4.9041, text: 'Amsterdam', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 59.3293, lng: 18.0686, text: 'Stockholm', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 43.6532, lng: -79.3832, text: 'Toronto', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 34.0522, lng: -118.2437, text: 'Los Angeles', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 41.8781, lng: -87.6298, text: 'Chicago', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 31.2304, lng: 121.4737, text: 'Shanghai', size: 0.4, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 22.3193, lng: 114.1694, text: 'Hong Kong', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 13.7563, lng: 100.5018, text: 'Bangkok', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: -34.6037, lng: -58.3816, text: 'Buenos Aires', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 41.0082, lng: 28.9784, text: 'Istanbul', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            { lat: 30.0444, lng: 31.2357, text: 'Cairo', size: 0.3, color: 'rgba(255, 255, 255, 0.8)' },
+            // Countries/Regions
+            { lat: 60, lng: -95, text: 'CANADA', size: 0.8, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 38, lng: -97, text: 'UNITED STATES', size: 0.9, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 23, lng: -102, text: 'MEXICO', size: 0.6, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: -10, lng: -55, text: 'BRAZIL', size: 0.8, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: -35, lng: -65, text: 'ARGENTINA', size: 0.6, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 54, lng: 10, text: 'EUROPE', size: 0.7, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 46, lng: 2, text: 'FRANCE', size: 0.5, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 51, lng: 10, text: 'GERMANY', size: 0.5, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 5, lng: 20, text: 'AFRICA', size: 0.8, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 60, lng: 100, text: 'RUSSIA', size: 1, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 35, lng: 105, text: 'CHINA', size: 0.9, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 20, lng: 78, text: 'INDIA', size: 0.7, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: 36, lng: 138, text: 'JAPAN', size: 0.5, color: 'rgba(200, 200, 200, 0.6)' },
+            { lat: -25, lng: 135, text: 'AUSTRALIA', size: 0.8, color: 'rgba(200, 200, 200, 0.6)' },
+          ]}
+          labelText="text"
+          labelSize="size"
+          labelDotRadius={0.25}
+          labelColor={d => d.color}
+          labelResolution={2}
+          labelAltitude={0.01}
+          
+          atmosphereColor="rgba(135, 206, 250, 0.4)"
+          atmosphereAltitude={0.25}
+          
+          showGraticules={false}
+          showAtmosphere={true}
+        />
+      </div>
+      
+      {/* Legend - Hidden on mobile */}
+      <div className="hidden md:block absolute bottom-6 left-6 bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl">
+        <h4 className="text-white font-medium text-xs mb-2">Status Legend</h4>
+        <div className="space-y-1.5 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+            <span className="text-slate-300">Accessible</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+            <span className="text-slate-300">Blocked</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-yellow-500 rounded-full animate-pulse"></div>
+            <span className="text-slate-300">Testing...</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-slate-600 rounded-full"></div>
+            <span className="text-slate-300">Pending</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Panel - Compact on mobile, hidden on smaller screens */}
+      {testResults && testResults.length > 0 && (
+        <div className="hidden sm:block absolute top-20 sm:top-6 right-3 sm:right-6 bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 sm:p-4 shadow-xl min-w-[160px] sm:min-w-[200px]">
+          <h4 className="text-white font-medium text-xs sm:text-sm mb-2 sm:mb-3">Test Results</h4>
+          <div className="space-y-1.5 sm:space-y-2 text-xs">
+            <div className="flex justify-between">
+              <span className="text-slate-400">Total Tests:</span>
+              <span className="text-white font-medium">{testResults.length}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-green-400">Accessible:</span>
+              <span className="text-white font-medium">
+                {testResults.filter(r => r.status === 'accessible').length}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-red-400">Blocked:</span>
+              <span className="text-white font-medium">
+                {testResults.filter(r => r.status === 'blocked').length}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Avg Load Time:</span>
+              <span className="text-white font-medium">
+                {Math.round(
+                  testResults.filter(r => r.loadTime).reduce((acc, r) => acc + r.loadTime, 0) /
+                  testResults.filter(r => r.loadTime).length
+                ) || 0}ms
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default MapView;
