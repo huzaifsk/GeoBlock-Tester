@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://geoblocktester.com/sitemap.xml
+Sitemap: https://geoblock-tester.pages.dev/sitemap.xml
 
 # Common bots
 User-agent: Googlebot
