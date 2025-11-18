@@ -1,16 +1,92 @@
-# React + Vite
+# 🌍 GeoBlock Tester
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Test your website's accessibility from 20+ countries instantly. Check geo-restrictions, CDN performance, and regional blocking for free.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🌐 Test from 20+ countries worldwide
+- ⚡ Real-time parallel testing
+- 🗺️ Interactive 3D globe visualization
+- 📊 Detailed test results with load times
+- 🔒 CDN and security analysis
+- 📱 Fully responsive design
+- 🆓 Free forever - No signup required
 
-## React Compiler
+## 🚀 Quick Start
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Installation
 
-## Expanding the ESLint configuration
+```bash
+npm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Development
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Build
+
+```bash
+npm run build
+```
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+## 🛠️ Tech Stack
+
+- **React 19.2** - UI Framework
+- **Vite 7.2** - Build Tool
+- **Tailwind CSS 4.1** - Styling
+- **Globe.gl** - 3D Globe Visualization
+- **Three.js** - WebGL Rendering
+
+## 📁 Project Structure
+
+```
+iphub/
+├── src/
+│   ├── components/
+│   │   ├── GeoBlockTester.jsx    # Test controls
+│   │   ├── MapView.jsx            # 3D Globe
+│   │   ├── TestResultsList.jsx   # Results panel
+│   │   └── ErrorBoundary.jsx     # Error handling
+│   ├── services/
+│   │   └── geoblock.js           # Testing logic
+│   ├── App.jsx                    # Main app
+│   └── main.jsx                   # Entry point
+├── public/
+│   ├── globe.svg                  # Favicon
+│   ├── robots.txt                 # SEO
+│   └── sitemap.xml               # SEO
+└── _headers                       # Cloudflare headers
+```
+
+## 🌍 Available Countries
+
+US, UK, Germany, France, Japan, China, India, Brazil, Australia, Canada, Russia, Singapore, UAE, South Africa, Mexico, Spain, Italy, South Korea, Netherlands, Sweden
+
+## 🚀 Deployment
+
+This project is configured for deployment on **Cloudflare Pages**.
+
+See [CLOUDFLARE_DEPLOY.md](./CLOUDFLARE_DEPLOY.md) for detailed deployment instructions.
+
+## 📄 License
+
+MIT
+
+## 👨‍💻 Author
+
+**Huzaif Shaikh**
+
+- GitHub: [@huzaifsk](https://github.com/huzaifsk)
+- LinkedIn: [huzaif-shaikh](https://www.linkedin.com/in/huzaif-shaikh/)
+- Twitter: [@Huzaif__Shaikh](https://x.com/Huzaif__Shaikh)
