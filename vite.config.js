@@ -14,25 +14,27 @@ export default defineConfig({
     }
   },
   build: {
-    target: 'es2015',
+    target: 'esnext',
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'globe': ['react-globe.gl', 'globe.gl', 'three'],
-          'react-vendor': ['react', 'react-dom'],
-          'd3': ['d3-scale', 'd3-array', 'd3-geo']
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('globe') || id.includes('three')) {
+              return 'globe';
+            }
+            if (id.includes('d3-')) {
+              return 'd3';
+            }
+          }
         }
       }
     },
     sourcemap: false,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    },
+    minify: 'esbuild',
     chunkSizeWarningLimit: 1000
   },
   optimizeDeps: {
