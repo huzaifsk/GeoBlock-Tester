@@ -68,7 +68,7 @@ function App() {
 
 
   return (
-    <div className="relative w-screen h-screen bg-[#0a0e27] overflow-hidden">
+    <div className="relative w-screen h-screen bg-[#0a0e27] overflow-hidden" style={{ height: '100dvh' }}>
       {/* Main Container */}
       <div className="h-full w-full flex flex-col">
         
@@ -255,11 +255,11 @@ function App() {
               </div>
             )}
 
-            {/* Mobile Action Buttons */}
-            <div className="lg:hidden absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+            {/* Mobile Action Buttons - Fixed to avoid browser tab bar */}
+            <div className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 flex gap-3 z-20 pb-safe">
               <button
                 onClick={() => setShowControls(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 font-medium transition-colors"
+                className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2 font-medium transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -269,7 +269,7 @@ function App() {
               {testResults.length > 0 && (
                 <button
                   onClick={() => setShowResults(true)}
-                  className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 font-medium transition-colors"
+                  className="bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2 font-medium transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
