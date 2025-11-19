@@ -1,33 +1,9 @@
-import { useEffect, useRef, useState, useMemo, memo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Globe from 'react-globe.gl';
 
-const MapView = memo(({ testResults, selectedCountries }) => {
+const MapView = ({ testResults, selectedCountries }) => {
   const globeEl = useRef();
   const [globeError, setGlobeError] = useState(false);
-  const [dimensions, setDimensions] = useState({
-    width: typeof window !== 'undefined' ? (window.innerWidth < 1024 ? window.innerWidth : window.innerWidth - 768) : 800,
-    height: typeof window !== 'undefined' ? (window.innerHeight - (window.innerWidth < 640 ? 64 : 80)) : 600
-  });
-
-  // Throttled resize handler for better performance
-  useEffect(() => {
-    let timeoutId;
-    const handleResize = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        setDimensions({
-          width: window.innerWidth < 1024 ? window.innerWidth : window.innerWidth - 768,
-          height: window.innerHeight - (window.innerWidth < 640 ? 64 : 80)
-        });
-      }, 250);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   useEffect(() => {
     try {
@@ -41,58 +17,15 @@ const MapView = memo(({ testResults, selectedCountries }) => {
     }
   }, []);
 
-  // Memoize HTML elements to avoid recreation on every render
-  const htmlElements = useMemo(() => {
-    return selectedCountries.map(country => {
-      const result = testResults?.find(r => r.country.code === country.code);
-      return {
-        lat: country.lat,
-        lng: country.lng,
-        country,
-        result,
-      };
-    });
-  }, [selectedCountries, testResults]);
-
-  // Memoize stats to avoid recalculation
-  const stats = useMemo(() => {
-    if (!testResults || testResults.length === 0) return null;
-    const withLoadTime = testResults.filter(r => r.loadTime);
+  const htmlElements = selectedCountries.map(country => {
+    const result = testResults?.find(r => r.country.code === country.code);
     return {
-      total: testResults.length,
-      accessible: testResults.filter(r => r.status === 'accessible').length,
-      blocked: testResults.filter(r => r.status === 'blocked').length,
-      avgLoadTime: withLoadTime.length > 0
-        ? Math.round(withLoadTime.reduce((acc, r) => acc + r.loadTime, 0) / withLoadTime.length)
-        : 0
+      lat: country.lat,
+      lng: country.lng,
+      country,
+      result,
     };
-  }, [testResults]);
-
-  // Memoize HTML element creation function
-  const createHtmlElement = useMemo(() => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    return (d) => {
-      const el = document.createElement('div');
-      const status = d.result?.status || 'pending';
-      
-      el.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; pointer-events: auto;">
-          <div style="width: ${isMobile ? '24px' : '32px'}; height: ${isMobile ? '24px' : '32px'}; border-radius: 50%; background: ${
-            status === 'accessible' ? '#10b981' : status === 'blocked' ? '#ef4444' : status === 'testing' ? '#f59e0b' : '#64748b'
-          }; border: 3px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; font-size: ${isMobile ? '14px' : '18px'}; box-shadow: 0 0 20px rgba(0,0,0,0.5); cursor: pointer;">
-            ${d.country.flag}
-          </div>
-          <div style="margin-top: 4px; padding: 2px ${isMobile ? '6px' : '8px'}; background: rgba(0,0,0,0.85); border-radius: 4px; font-size: ${isMobile ? '8px' : '10px'}; color: white; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.4); font-weight: 500; ${isMobile ? 'display: none;' : ''}">
-            ${d.country.name}
-          </div>
-          ${d.result ? `<div style="margin-top: 2px; padding: 2px 6px; background: ${status === 'accessible' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}; border: 1px solid ${status === 'accessible' ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'}; border-radius: 3px; font-size: 9px; color: ${status === 'accessible' ? '#10b981' : '#ef4444'}; font-weight: 600;">${status === 'accessible' ? '✓ ' + d.result.loadTime + 'ms' : '✗ Blocked'}</div>` : ''}
-        </div>
-      `;
-      
-      el.style.pointerEvents = 'auto';
-      return el;
-    };
-  }, []);
+  });
 
   return (
     <div className="relative w-full h-full bg-slate-900 overflow-hidden">
@@ -117,14 +50,80 @@ const MapView = memo(({ testResults, selectedCountries }) => {
         ) : (
           <Globe
           ref={globeEl}
-          width={dimensions.width}
-          height={dimensions.height}
+          width={window.innerWidth < 1024 ? window.innerWidth : window.innerWidth - 768}
+          height={window.innerHeight - (window.innerWidth < 640 ? 64 : 80)}
           globeImageUrl="https://unpkg.com/three-globe@2.31.1/example/img/earth-blue-marble.jpg"
           bumpImageUrl="https://unpkg.com/three-globe@2.31.1/example/img/earth-topology.png"
           backgroundImageUrl="https://unpkg.com/three-globe@2.31.1/example/img/night-sky.png"
           
           htmlElementsData={htmlElements}
-          htmlElement={createHtmlElement}
+          htmlElement={d => {
+            const el = document.createElement('div');
+            const status = d.result?.status || 'pending';
+            
+            const isMobile = window.innerWidth < 640;
+            el.innerHTML = `
+              <div style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                pointer-events: auto;
+              ">
+                <div style="
+                  width: ${isMobile ? '24px' : '32px'};
+                  height: ${isMobile ? '24px' : '32px'};
+                  border-radius: 50%;
+                  background: ${
+                    status === 'accessible' ? '#10b981' :
+                    status === 'blocked' ? '#ef4444' :
+                    status === 'testing' ? '#f59e0b' :
+                    '#64748b'
+                  };
+                  border: 3px solid rgba(255,255,255,0.4);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: ${isMobile ? '14px' : '18px'};
+                  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+                  animation: ${status === 'testing' ? 'pulse 2s infinite' : 'none'};
+                  cursor: pointer;
+                ">
+                  ${d.country.flag}
+                </div>
+                <div style="
+                  margin-top: 4px;
+                  padding: 2px ${isMobile ? '6px' : '8px'};
+                  background: rgba(0,0,0,0.85);
+                  border-radius: 4px;
+                  font-size: ${isMobile ? '8px' : '10px'};
+                  color: white;
+                  white-space: nowrap;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+                  font-weight: 500;
+                  ${isMobile ? 'display: none;' : ''}
+                ">
+                  ${d.country.name}
+                </div>
+                ${d.result ? `
+                  <div style="
+                    margin-top: 2px;
+                    padding: 2px 6px;
+                    background: ${status === 'accessible' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};
+                    border: 1px solid ${status === 'accessible' ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'};
+                    border-radius: 3px;
+                    font-size: 9px;
+                    color: ${status === 'accessible' ? '#10b981' : '#ef4444'};
+                    font-weight: 600;
+                  ">
+                    ${status === 'accessible' ? '✓ ' + d.result.loadTime + 'ms' : '✗ Blocked'}
+                  </div>
+                ` : ''}
+              </div>
+            `;
+            
+            el.style.pointerEvents = 'auto';
+            return el;
+          }}
           htmlAltitude={0.02}
           
           labelsData={[
@@ -213,33 +212,40 @@ const MapView = memo(({ testResults, selectedCountries }) => {
       </div>
 
       {/* Stats Panel - Compact on mobile, hidden on smaller screens */}
-      {stats && (
-        <div className="hidden sm:block absolute top-20 sm:top-6 right-3 sm:right-6 bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 sm:p-4 shadow-xl min-w-40 sm:min-w-[200px]">
+      {testResults && testResults.length > 0 && (
+        <div className="hidden sm:block absolute top-20 sm:top-6 right-3 sm:right-6 bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 sm:p-4 shadow-xl min-w-[160px] sm:min-w-[200px]">
           <h4 className="text-white font-medium text-xs sm:text-sm mb-2 sm:mb-3">Test Results</h4>
           <div className="space-y-1.5 sm:space-y-2 text-xs">
             <div className="flex justify-between">
               <span className="text-slate-400">Total Tests:</span>
-              <span className="text-white font-medium">{stats.total}</span>
+              <span className="text-white font-medium">{testResults.length}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-green-400">Accessible:</span>
-              <span className="text-white font-medium">{stats.accessible}</span>
+              <span className="text-white font-medium">
+                {testResults.filter(r => r.status === 'accessible').length}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-red-400">Blocked:</span>
-              <span className="text-white font-medium">{stats.blocked}</span>
+              <span className="text-white font-medium">
+                {testResults.filter(r => r.status === 'blocked').length}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Avg Load Time:</span>
-              <span className="text-white font-medium">{stats.avgLoadTime}ms</span>
+              <span className="text-white font-medium">
+                {Math.round(
+                  testResults.filter(r => r.loadTime).reduce((acc, r) => acc + r.loadTime, 0) /
+                  testResults.filter(r => r.loadTime).length
+                ) || 0}ms
+              </span>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-});
-
-MapView.displayName = 'MapView';
+};
 
 export default MapView;

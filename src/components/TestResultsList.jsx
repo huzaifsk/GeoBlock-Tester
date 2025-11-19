@@ -1,4 +1,6 @@
-const TestResultsList = ({ results, loading }) => {
+import { memo } from 'react';
+
+const TestResultsList = memo(({ results, loading }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8 sm:py-12">
@@ -143,6 +145,8 @@ const TestResultsList = ({ results, loading }) => {
       </div>
     </div>
   );
-};
+});
+
+TestResultsList.displayName = 'TestResultsList';
 
 export default TestResultsList;

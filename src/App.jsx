@@ -1,8 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import GeoBlockTester from './components/GeoBlockTester';
-import MapView from './components/MapView';
 import TestResultsList from './components/TestResultsList';
 import { simulateGeoTest } from './services/geoblock';
+
+// Lazy load the heavy MapView component
+const MapView = lazy(() => import('./components/MapView'));
 
 function App() {
   const [testResults, setTestResults] = useState([]);
@@ -16,6 +18,13 @@ function App() {
   useEffect(() => {
     document.title = 'GeoBlock Tester - Test Website Accessibility from 20+ Countries';
   }, []);
+
+  // Memoize expensive calculations
+  const stats = useMemo(() => {
+    const accessible = testResults.filter(r => r.status === 'accessible').length;
+    const blocked = testResults.filter(r => r.status === 'blocked').length;
+    return { accessible, blocked, total: testResults.length };
+  }, [testResults]);
 
   // Close mobile panels when test starts
   const handleTest = async ({ url, countries }) => {
@@ -91,15 +100,15 @@ function App() {
               </div>
               
               {/* Stats Badge */}
-              {testResults.length > 0 && (
+              {stats.total > 0 && (
                 <div className="ml-2 sm:ml-6 flex items-center gap-1 sm:gap-3">
                   <div className="flex items-center gap-1 bg-green-500/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md border border-green-500/20">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     <span className="text-green-400 text-xs sm:text-sm font-semibold">
-                      <span className="hidden sm:inline">{testResults.filter(r => r.status === 'accessible').length} Accessible</span>
-                      <span className="sm:hidden">{testResults.filter(r => r.status === 'accessible').length}</span>
+                      <span className="hidden sm:inline">{stats.accessible} Accessible</span>
+                      <span className="sm:hidden">{stats.accessible}</span>
                     </span>
                   </div>
                   <div className="flex items-center gap-1 bg-red-500/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md border border-red-500/20">
@@ -107,8 +116,8 @@ function App() {
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                     <span className="text-red-400 text-xs sm:text-sm font-semibold">
-                      <span className="hidden sm:inline">{testResults.filter(r => r.status === 'blocked').length} Blocked</span>
-                      <span className="sm:hidden">{testResults.filter(r => r.status === 'blocked').length}</span>
+                      <span className="hidden sm:inline">{stats.blocked} Blocked</span>
+                      <span className="sm:hidden">{stats.blocked}</span>
                     </span>
                   </div>
                 </div>
@@ -225,10 +234,19 @@ function App() {
 
           {/* Center - World Map */}
           <div className="flex-1 relative bg-slate-900/30">
-            <MapView 
-              testResults={testResults} 
-              selectedCountries={selectedCountries}
-            />
+            <Suspense fallback={
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-900">
+                <div className="text-center">
+                  <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-slate-400">Loading globe...</p>
+                </div>
+              </div>
+            }>
+              <MapView 
+                testResults={testResults} 
+                selectedCountries={selectedCountries}
+              />
+            </Suspense>
             
             {testedUrl && (
               <div className="absolute top-3 left-3 right-3 sm:top-6 sm:left-6 sm:right-auto bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg px-3 py-2 sm:px-4 shadow-xl max-w-md">
