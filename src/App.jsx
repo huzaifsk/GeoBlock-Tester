@@ -142,7 +142,7 @@ function App() {
 
               <div className="hidden sm:flex items-center gap-3">
               <a 
-                href="https://github.com/huzaifsk" 
+                href="https://github.com/huzaifsk/GeoBlock-Tester" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors group"
