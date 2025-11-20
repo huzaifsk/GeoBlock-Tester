@@ -6,26 +6,64 @@ const GeoBlockTester = ({ onTest }) => {
   const [loading, setLoading] = useState(false);
 
   const countries = [
+    // North America
     { code: 'US', name: 'United States', flag: '🇺🇸', lat: 37.0902, lng: -95.7129 },
+    { code: 'CA', name: 'Canada', flag: '🇨🇦', lat: 56.1304, lng: -106.3468 },
+    { code: 'MX', name: 'Mexico', flag: '🇲🇽', lat: 23.6345, lng: -102.5528 },
+    
+    // South America
+    { code: 'BR', name: 'Brazil', flag: '🇧🇷', lat: -14.2350, lng: -51.9253 },
+    { code: 'AR', name: 'Argentina', flag: '🇦🇷', lat: -38.4161, lng: -63.6167 },
+    { code: 'CL', name: 'Chile', flag: '🇨🇱', lat: -35.6751, lng: -71.5430 },
+    { code: 'CO', name: 'Colombia', flag: '🇨🇴', lat: 4.5709, lng: -74.2973 },
+    
+    // Europe
     { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', lat: 55.3781, lng: -3.4360 },
     { code: 'DE', name: 'Germany', flag: '🇩🇪', lat: 51.1657, lng: 10.4515 },
     { code: 'FR', name: 'France', flag: '🇫🇷', lat: 46.2276, lng: 2.2137 },
-    { code: 'JP', name: 'Japan', flag: '🇯🇵', lat: 36.2048, lng: 138.2529 },
-    { code: 'CN', name: 'China', flag: '🇨🇳', lat: 35.8617, lng: 104.1954 },
-    { code: 'IN', name: 'India', flag: '🇮🇳', lat: 20.5937, lng: 78.9629 },
-    { code: 'BR', name: 'Brazil', flag: '🇧🇷', lat: -14.2350, lng: -51.9253 },
-    { code: 'AU', name: 'Australia', flag: '🇦🇺', lat: -25.2744, lng: 133.7751 },
-    { code: 'CA', name: 'Canada', flag: '🇨🇦', lat: 56.1304, lng: -106.3468 },
-    { code: 'RU', name: 'Russia', flag: '🇷🇺', lat: 61.5240, lng: 105.3188 },
-    { code: 'SG', name: 'Singapore', flag: '🇸🇬', lat: 1.3521, lng: 103.8198 },
-    { code: 'AE', name: 'UAE', flag: '🇦🇪', lat: 23.4241, lng: 53.8478 },
-    { code: 'ZA', name: 'South Africa', flag: '🇿🇦', lat: -30.5595, lng: 22.9375 },
-    { code: 'MX', name: 'Mexico', flag: '🇲🇽', lat: 23.6345, lng: -102.5528 },
     { code: 'ES', name: 'Spain', flag: '🇪🇸', lat: 40.4637, lng: -3.7492 },
     { code: 'IT', name: 'Italy', flag: '🇮🇹', lat: 41.8719, lng: 12.5674 },
-    { code: 'KR', name: 'South Korea', flag: '🇰🇷', lat: 35.9078, lng: 127.7669 },
     { code: 'NL', name: 'Netherlands', flag: '🇳🇱', lat: 52.1326, lng: 5.2913 },
     { code: 'SE', name: 'Sweden', flag: '🇸🇪', lat: 60.1282, lng: 18.6435 },
+    { code: 'CH', name: 'Switzerland', flag: '🇨🇭', lat: 46.8182, lng: 8.2275 },
+    { code: 'PL', name: 'Poland', flag: '🇵🇱', lat: 51.9194, lng: 19.1451 },
+    { code: 'NO', name: 'Norway', flag: '🇳🇴', lat: 60.4720, lng: 8.4689 },
+    { code: 'FI', name: 'Finland', flag: '🇫🇮', lat: 61.9241, lng: 25.7482 },
+    { code: 'IE', name: 'Ireland', flag: '🇮🇪', lat: 53.4129, lng: -8.2439 },
+    { code: 'PT', name: 'Portugal', flag: '🇵🇹', lat: 39.3999, lng: -8.2245 },
+    { code: 'RU', name: 'Russia', flag: '🇷🇺', lat: 61.5240, lng: 105.3188 },
+    { code: 'TR', name: 'Turkey', flag: '🇹🇷', lat: 38.9637, lng: 35.2433 },
+    
+    // Asia
+    { code: 'CN', name: 'China', flag: '🇨🇳', lat: 35.8617, lng: 104.1954 },
+    { code: 'IN', name: 'India', flag: '🇮🇳', lat: 20.5937, lng: 78.9629 },
+    { code: 'JP', name: 'Japan', flag: '🇯🇵', lat: 36.2048, lng: 138.2529 },
+    { code: 'KR', name: 'South Korea', flag: '🇰🇷', lat: 35.9078, lng: 127.7669 },
+    { code: 'SG', name: 'Singapore', flag: '🇸🇬', lat: 1.3521, lng: 103.8198 },
+    { code: 'TH', name: 'Thailand', flag: '🇹🇭', lat: 15.8700, lng: 100.9925 },
+    { code: 'VN', name: 'Vietnam', flag: '🇻🇳', lat: 14.0583, lng: 108.2772 },
+    { code: 'ID', name: 'Indonesia', flag: '🇮🇩', lat: -0.7893, lng: 113.9213 },
+    { code: 'MY', name: 'Malaysia', flag: '🇲🇾', lat: 4.2105, lng: 101.9758 },
+    { code: 'PH', name: 'Philippines', flag: '🇵🇭', lat: 12.8797, lng: 121.7740 },
+    { code: 'PK', name: 'Pakistan', flag: '🇵🇰', lat: 30.3753, lng: 69.3451 },
+    { code: 'BD', name: 'Bangladesh', flag: '🇧🇩', lat: 23.6850, lng: 90.3563 },
+    { code: 'IL', name: 'Israel', flag: '🇮🇱', lat: 31.0461, lng: 34.8516 },
+    { code: 'SA', name: 'Saudi Arabia', flag: '🇸🇦', lat: 23.8859, lng: 45.0792 },
+    
+    // Middle East
+    { code: 'AE', name: 'UAE', flag: '🇦🇪', lat: 23.4241, lng: 53.8478 },
+    { code: 'QA', name: 'Qatar', flag: '🇶🇦', lat: 25.3548, lng: 51.1839 },
+    { code: 'EG', name: 'Egypt', flag: '🇪🇬', lat: 26.8206, lng: 30.8025 },
+    
+    // Africa
+    { code: 'ZA', name: 'South Africa', flag: '🇿🇦', lat: -30.5595, lng: 22.9375 },
+    { code: 'NG', name: 'Nigeria', flag: '🇳🇬', lat: 9.0820, lng: 8.6753 },
+    { code: 'KE', name: 'Kenya', flag: '🇰🇪', lat: -0.0236, lng: 37.9062 },
+    { code: 'MA', name: 'Morocco', flag: '🇲🇦', lat: 31.7917, lng: -7.0926 },
+    
+    // Oceania
+    { code: 'AU', name: 'Australia', flag: '🇦🇺', lat: -25.2744, lng: 133.7751 },
+    { code: 'NZ', name: 'New Zealand', flag: '🇳🇿', lat: -40.9006, lng: 174.8860 },
   ];
 
   const toggleCountry = (country) => {
