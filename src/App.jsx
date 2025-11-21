@@ -140,6 +140,23 @@ function App() {
                 </button>
               )}
 
+              {/* Product Hunt Badge */}
+              <a 
+                href="https://www.producthunt.com/products/geoblock-tester?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-geoblock&#0045;tester" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:block hover:opacity-80 transition-opacity"
+                title="Featured on Product Hunt"
+              >
+                <img 
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1040371&theme=light&t=1763712420744" 
+                  alt="GeoBlock Tester - Test website accessibility from 20+ countries | free tool | Product Hunt" 
+                  style={{ width: '160px', height: '34px' }} 
+                  width="160" 
+                  height="34" 
+                />
+              </a>
+
               <div className="hidden sm:flex items-center gap-3">
               <a 
                 href="https://github.com/huzaifsk/GeoBlock-Tester" 
